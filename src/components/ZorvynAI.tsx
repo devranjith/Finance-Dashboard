@@ -13,9 +13,9 @@ interface Message {
 
 const SUGGESTED_PROMPTS = [
   { icon: TrendingUp, label: 'Spending', prompt: 'Analyze my spending patterns this month' },
-  { icon: PieChart,   label: 'Budget',   prompt: 'Give me a breakdown of my budget categories' },
-  { icon: DollarSign, label: 'Savings',  prompt: 'What are some tips to improve my savings?' },
-  { icon: Zap,        label: 'Summary',  prompt: 'Give me a quick financial summary' },
+  { icon: PieChart, label: 'Budget', prompt: 'Give me a breakdown of my budget categories' },
+  { icon: DollarSign, label: 'Savings', prompt: 'What are some tips to improve my savings?' },
+  { icon: Zap, label: 'Summary', prompt: 'Give me a quick financial summary' },
 ];
 
 const AI_RESPONSES: Record<string, string> = {
@@ -95,9 +95,9 @@ export function ZorvynAI() {
   };
 
   const stats = [
-    { label: 'Transactions',      value: transactions.length.toString(),                                                                      icon: TrendingUp, color: '#a855f7' },
-    { label: 'Income Sources',    value: transactions.filter(t => t.type === 'income').length.toString(),                                     icon: DollarSign, color: '#22c55e' },
-    { label: 'Expense Categories',value: [...new Set(transactions.filter(t => t.type === 'expense').map(t => t.category))].length.toString(), icon: PieChart,   color: '#3b82f6' },
+    { label: 'Transactions', value: transactions.length.toString(), icon: TrendingUp, color: '#a855f7' },
+    { label: 'Income Sources', value: transactions.filter(t => t.type === 'income').length.toString(), icon: DollarSign, color: '#22c55e' },
+    { label: 'Expense Categories', value: [...new Set(transactions.filter(t => t.type === 'expense').map(t => t.category))].length.toString(), icon: PieChart, color: '#3b82f6' },
   ];
 
   return (
@@ -105,7 +105,7 @@ export function ZorvynAI() {
     <div className="flex flex-col gap-3 h-[calc(100svh-160px)] sm:h-[calc(100vh-200px)] md:h-[calc(100vh-220px)] max-h-[860px]">
 
       {/* ── Stats bar ── */}
-      <div className="grid grid-cols-3 gap-2 sm:gap-4 flex-shrink-0">
+      {/* <div className="grid grid-cols-3 gap-2 sm:gap-4 flex-shrink-0">
         {stats.map((stat) => (
           <div
             key={stat.label}
@@ -119,12 +119,13 @@ export function ZorvynAI() {
             </div>
             <div className="min-w-0">
               <p className="text-xl sm:text-2xl font-bold text-white leading-none">{stat.value}</p>
-              {/* Label truncated on mobile, full on sm+ */}
+
               <p className="text-[10px] sm:text-xs text-[#A1A1AA] mt-0.5 leading-tight line-clamp-2">{stat.label}</p>
             </div>
-          </div>
-        ))}
-      </div>
+          </div >
+        ))
+        }
+      </div > */}
 
       {/* ── Chat container ── */}
       <div className="flex-1 bg-[#27272A] rounded-xl border border-[#3f3f46]/50 flex flex-col overflow-hidden min-h-0">
@@ -177,11 +178,10 @@ export function ZorvynAI() {
 
                 <div className={`max-w-[85%] sm:max-w-[80%] group ${msg.role === 'user' ? 'items-end' : 'items-start'} flex flex-col`}>
                   <div
-                    className={`rounded-2xl px-3 sm:px-4 py-2.5 sm:py-3 text-sm leading-relaxed ${
-                      msg.role === 'user'
-                        ? 'bg-purple-600 text-white rounded-tr-sm'
-                        : 'bg-[#1c1c1f] border border-[#3f3f46]/50 text-[#D4D4D8] rounded-tl-sm'
-                    }`}
+                    className={`rounded-2xl px-3 sm:px-4 py-2.5 sm:py-3 text-sm leading-relaxed ${msg.role === 'user'
+                      ? 'bg-purple-600 text-white rounded-tr-sm'
+                      : 'bg-[#1c1c1f] border border-[#3f3f46]/50 text-[#D4D4D8] rounded-tl-sm'
+                      }`}
                   >
                     {msg.role === 'assistant' ? (
                       <div className="space-y-1">{formatMessage(msg.content)}</div>
@@ -286,6 +286,6 @@ export function ZorvynAI() {
           </p>
         </div>
       </div>
-    </div>
+    </div >
   );
 }
