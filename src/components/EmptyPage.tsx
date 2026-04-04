@@ -137,7 +137,7 @@ export function EmptyPage({ page }: EmptyPageProps) {
         {features.length > 0 && (
           <div className="bg-[#27272A] border border-[#3f3f46]/50 rounded-2xl p-5 text-left">
             <p className="text-xs font-semibold text-[#A1A1AA] uppercase tracking-wider mb-4">What's included</p>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {features.map((f, i) => (
                 <motion.div
                   key={f}
