@@ -10,6 +10,8 @@ import {
   Box,
   Sparkles,
   Search,
+  ListTodo,
+  Newspaper,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -20,6 +22,8 @@ export type PageName =
   | 'Transactions'
   | 'Insights'
   | 'ZorvynAI'
+  | 'Tasks'
+  | 'Stock News'
   | 'Accounts'
   | 'Calendar'
   | 'Reports'
@@ -40,6 +44,8 @@ export function SidebarNav({ activePage, onNavigate }: NavProps) {
     { name: 'Dashboard', icon: LayoutDashboard },
     { name: 'Transactions', icon: WalletCards },
     { name: 'Insights', icon: PieChart },
+    { name: 'Tasks', icon: ListTodo },
+    { name: 'Stock News', icon: Newspaper },
   ];
 
   const middleNav: { name: PageName; icon: React.ElementType }[] = [

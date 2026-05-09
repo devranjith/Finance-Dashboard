@@ -57,6 +57,14 @@ const PAGE_TITLES: Record<PageName, { title: string; subtitle: string }> = {
     title: 'Settings',
     subtitle: 'Manage your account and preferences',
   },
+  Tasks: {
+    title: 'Tasks & Productivity',
+    subtitle: 'Manage your daily to-dos and priorities',
+  },
+  'Stock News': {
+    title: 'Market Insights',
+    subtitle: 'Latest financial news and stock market updates',
+  },
 };
 
 export function Header({ activePage }: HeaderProps) {

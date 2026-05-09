@@ -6,6 +6,8 @@ import { PerformanceChart } from '@/components/dashboard/PerformanceChart';
 import { DetailedInsights } from '@/components/dashboard/DetailedInsights';
 import { ZorvynAI } from '@/components/ZorvynAI';
 import { EmptyPage } from '@/components/EmptyPage';
+import { TasksPage } from '@/components/TasksPage';
+import { StockNewsPage } from '@/components/StockNewsPage';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { PageName } from '@/components/layout/Sidebar';
 
@@ -58,6 +60,18 @@ function App() {
         return (
           <motion.div key="zorvyn" variants={pageVariants} initial="initial" animate="animate" exit="exit">
             <ZorvynAI />
+          </motion.div>
+        );
+      case 'Tasks':
+        return (
+          <motion.div key="tasks" variants={pageVariants} initial="initial" animate="animate" exit="exit">
+            <TasksPage />
+          </motion.div>
+        );
+      case 'Stock News':
+        return (
+          <motion.div key="stock-news" variants={pageVariants} initial="initial" animate="animate" exit="exit">
+            <StockNewsPage />
           </motion.div>
         );
       default:
