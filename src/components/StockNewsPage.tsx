@@ -1,91 +1,173 @@
-import React from 'react';
-import { Newspaper, ExternalLink, TrendingUp } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { useFinanceStore } from '@/store/useFinanceStore';
+import { Sparkles, TrendingUp, DollarSign, Target, Activity, AlertCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 
-const MOCK_NEWS = [
-  {
-    id: '1',
-    headline: 'Tech Stocks Rally as AI Innovations Drive Market Growth',
-    source: 'Financial Times',
-    time: '2 hours ago',
-    url: '#',
-    image: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&q=80&w=400',
-    summary: 'Major technology companies saw significant gains today as new artificial intelligence products were announced, pushing the NASDAQ to record highs.'
+const STOCK_OF_THE_DAY = {
+  ticker: 'NVDA',
+  name: 'NVIDIA Corporation',
+  currentPrice: 850.50,
+  targetPrice: 1050.00,
+  financials: {
+    peRatio: 75.2,
+    debtToEquity: 0.12,
+    revenueGrowth: '+125%',
   },
-  {
-    id: '2',
-    headline: 'Federal Reserve Hints at Possible Rate Cuts Later This Year',
-    source: 'Wall Street Journal',
-    time: '4 hours ago',
-    url: '#',
-    image: 'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&q=80&w=400',
-    summary: 'In a recent press conference, the Fed chair suggested that if inflation continues to cool, we might see interest rate cuts by Q3.'
-  },
-  {
-    id: '3',
-    headline: 'Understanding Index Funds: A Beginner\'s Guide to Passive Investing',
-    source: 'Investopedia',
-    time: '1 day ago',
-    url: '#',
-    image: 'https://images.unsplash.com/photo-1579532537598-459ecdaf39cc?auto=format&fit=crop&q=80&w=400',
-    summary: 'Index funds offer a low-cost, diversified way to invest in the stock market. Learn why Warren Buffett recommends them for most retail investors.'
-  }
-];
+  thesis: [
+    'Undisputed leader in AI infrastructure and data center GPUs.',
+    'Consistently crushing earnings expectations due to massive enterprise demand.',
+    'Low debt-to-equity ratio indicates strong financial health and minimal leverage risk.'
+  ]
+};
 
 export function StockNewsPage() {
+  const { transactions } = useFinanceStore();
+  
+  // Calculate user's total available balance
+  const availableBalance = useMemo(() => {
+    return transactions.reduce((acc, curr) => {
+      if (curr.type === 'income') return acc + curr.amount;
+      return acc - curr.amount;
+    }, 0);
+  }, [transactions]);
+
+  const [budgetPercent, setBudgetPercent] = useState<number>(10);
+  
+  // Calculations
+  const budgetAmount = Math.max(0, (availableBalance * budgetPercent) / 100);
+  const sharesCanBuy = Math.floor(budgetAmount / STOCK_OF_THE_DAY.currentPrice);
+  const totalCost = sharesCanBuy * STOCK_OF_THE_DAY.currentPrice;
+  const potentialProfitPerShare = STOCK_OF_THE_DAY.targetPrice - STOCK_OF_THE_DAY.currentPrice;
+  const totalPotentialProfit = sharesCanBuy * potentialProfitPerShare;
+
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      <div className="flex items-center justify-between mb-8">
+    <div className="max-w-6xl mx-auto space-y-8 pb-10">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-3">
-            <Newspaper className="w-6 h-6 text-blue-400" />
-            Market Insights & Education
-          </h1>
-          <p className="text-[#A1A1AA] mt-1">Develop your financial knowledge with the latest updates.</p>
-        </div>
-        <div className="bg-blue-500/10 text-blue-400 border border-blue-500/20 px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-medium">
-          <TrendingUp className="w-4 h-4" /> Market Open
+          <div className="flex items-center gap-2 text-purple-400 font-semibold mb-2 text-sm tracking-widest uppercase">
+            <Sparkles className="w-4 h-4" /> Zorvyn AI Pick of the Day
+          </div>
+          <h1 className="text-3xl font-bold text-white">Investment Assistant</h1>
+          <p className="text-[#A1A1AA] mt-1 text-lg">Actionable insights tailored to your budget.</p>
         </div>
       </div>
 
-      <div className="grid gap-6">
-        {MOCK_NEWS.map((news, index) => (
-          <motion.a
-            href={news.url}
-            key={news.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
-            className="group flex flex-col md:flex-row gap-6 bg-[#27272A] border border-[#3f3f46] hover:border-blue-500/30 rounded-2xl p-4 transition-all hover:bg-[#27272A]/80"
-          >
-            <div className="w-full md:w-64 h-40 shrink-0 rounded-xl overflow-hidden relative">
-              <img src={news.image} alt={news.headline} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-              <span className="absolute bottom-3 left-3 text-xs font-semibold text-white bg-black/50 backdrop-blur-md px-2 py-1 rounded-md">
-                {news.source}
-              </span>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        {/* Left Column: Stock Analysis */}
+        <div className="lg:col-span-2 space-y-6">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-[#27272A] border border-[#3f3f46] rounded-2xl p-8 relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
+               <TrendingUp className="w-32 h-32 text-blue-500" />
             </div>
             
-            <div className="flex-1 flex flex-col justify-center">
-              <div className="text-xs text-[#A1A1AA] mb-2">{news.time}</div>
-              <h3 className="text-xl font-semibold text-white mb-3 group-hover:text-blue-400 transition-colors">
-                {news.headline}
-              </h3>
-              <p className="text-[#A1A1AA] text-sm leading-relaxed mb-4 line-clamp-2">
-                {news.summary}
-              </p>
-              <div className="mt-auto flex items-center text-sm font-medium text-blue-400 group-hover:text-blue-300">
-                Read full article <ExternalLink className="w-4 h-4 ml-1.5" />
+            <div className="flex justify-between items-start mb-8 relative z-10">
+              <div>
+                <h2 className="text-4xl font-bold text-white tracking-tight">{STOCK_OF_THE_DAY.ticker}</h2>
+                <p className="text-[#A1A1AA] text-lg">{STOCK_OF_THE_DAY.name}</p>
+              </div>
+              <div className="text-right">
+                <div className="text-3xl font-bold text-white">${STOCK_OF_THE_DAY.currentPrice.toFixed(2)}</div>
+                <div className="text-green-400 font-medium flex items-center justify-end gap-1 mt-1">
+                  Target: ${STOCK_OF_THE_DAY.targetPrice.toFixed(2)} <Target className="w-4 h-4" />
+                </div>
               </div>
             </div>
-          </motion.a>
-        ))}
-      </div>
-      
-      <div className="text-center mt-10">
-        <p className="text-[#A1A1AA] text-sm">
-          Want live news? We can connect this to a real API (like Finnhub or AlphaVantage) in the next iteration!
-        </p>
+
+            {/* Financials Grid */}
+            <h3 className="text-white font-semibold mb-4 flex items-center gap-2"><Activity className="w-5 h-5 text-blue-400" /> Financial Health</h3>
+            <div className="grid grid-cols-3 gap-4 mb-8">
+              <div className="bg-[#18181A] rounded-xl p-4 border border-[#3f3f46]">
+                <div className="text-[#A1A1AA] text-xs mb-1 uppercase tracking-wider">P/E Ratio</div>
+                <div className="text-white font-semibold text-xl">{STOCK_OF_THE_DAY.financials.peRatio}</div>
+              </div>
+              <div className="bg-[#18181A] rounded-xl p-4 border border-[#3f3f46]">
+                <div className="text-[#A1A1AA] text-xs mb-1 uppercase tracking-wider">Debt/Equity</div>
+                <div className="text-white font-semibold text-xl">{STOCK_OF_THE_DAY.financials.debtToEquity}</div>
+              </div>
+              <div className="bg-[#18181A] rounded-xl p-4 border border-[#3f3f46]">
+                <div className="text-[#A1A1AA] text-xs mb-1 uppercase tracking-wider">Rev Growth</div>
+                <div className="text-green-400 font-semibold text-xl">{STOCK_OF_THE_DAY.financials.revenueGrowth}</div>
+              </div>
+            </div>
+
+            {/* Thesis */}
+            <h3 className="text-white font-semibold mb-4 flex items-center gap-2"><Sparkles className="w-5 h-5 text-purple-400" /> Why buy?</h3>
+            <ul className="space-y-3">
+              {STOCK_OF_THE_DAY.thesis.map((point, idx) => (
+                <li key={idx} className="flex items-start gap-3 text-[#A1A1AA]">
+                  <div className="w-1.5 h-1.5 rounded-full bg-purple-500 mt-2 shrink-0" />
+                  <span className="leading-relaxed">{point}</span>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+        </div>
+
+        {/* Right Column: Position Sizer */}
+        <div className="space-y-6">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-gradient-to-b from-[#27272A] to-[#18181A] border border-purple-500/30 rounded-2xl p-6 shadow-[0_0_30px_rgba(168,85,247,0.1)]">
+            <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+              <DollarSign className="w-6 h-6 text-purple-400" />
+              Smart Position Sizer
+            </h3>
+
+            {/* Available Balance */}
+            <div className="mb-8">
+              <div className="text-[#A1A1AA] text-sm mb-1">Your Available Cash</div>
+              <div className={`text-3xl font-bold ${availableBalance >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                ${availableBalance.toFixed(2)}
+              </div>
+              {availableBalance <= 0 && (
+                <div className="text-red-400 text-xs mt-2 flex items-center gap-1">
+                  <AlertCircle className="w-3 h-3" /> You need a positive balance to invest. Add income transactions in the dashboard!
+                </div>
+              )}
+            </div>
+
+            {/* Slider */}
+            <div className={`space-y-4 mb-8 ${availableBalance <= 0 ? 'opacity-50 pointer-events-none' : ''}`}>
+              <div className="flex justify-between text-sm">
+                <span className="text-[#A1A1AA]">Investment Budget</span>
+                <span className="text-white font-semibold">{budgetPercent}%</span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={budgetPercent}
+                onChange={(e) => setBudgetPercent(Number(e.target.value))}
+                className="w-full h-2 bg-[#3f3f46] rounded-lg appearance-none cursor-pointer accent-purple-500"
+              />
+              <div className="text-right text-purple-400 font-bold text-lg">
+                ${budgetAmount.toFixed(2)}
+              </div>
+            </div>
+
+            {/* Results */}
+            <div className="bg-[#18181A] rounded-xl p-5 border border-[#3f3f46] space-y-4">
+              <div className="flex justify-between items-center border-b border-[#3f3f46] pb-3">
+                <span className="text-[#A1A1AA]">Shares you can buy</span>
+                <span className="text-2xl font-bold text-white">{sharesCanBuy}</span>
+              </div>
+              <div className="flex justify-between items-center border-b border-[#3f3f46] pb-3">
+                <span className="text-[#A1A1AA]">Actual Cost</span>
+                <span className="text-white font-medium">${totalCost.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-[#A1A1AA]">Potential Profit</span>
+                <span className="text-green-400 font-bold">+${totalPotentialProfit.toFixed(2)}</span>
+              </div>
+            </div>
+
+            <Button className="w-full mt-6 bg-purple-600 hover:bg-purple-700 text-white shadow-lg shadow-purple-500/20 h-12 text-lg">
+              Log Trade
+            </Button>
+          </motion.div>
+        </div>
+
       </div>
     </div>
   );
