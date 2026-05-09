@@ -2,6 +2,7 @@ import React from 'react';
 import { Share, Bell, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useFinanceStore } from '@/store/useFinanceStore';
+import { useAuthStore } from '@/store/useAuthStore';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -69,6 +70,7 @@ const PAGE_TITLES: Record<PageName, { title: string; subtitle: string }> = {
 
 export function Header({ activePage }: HeaderProps) {
   const { role, setRole } = useFinanceStore();
+  const { user, signOut } = useAuthStore();
   const pageInfo = PAGE_TITLES[activePage];
 
   const downloadCSV = () => {
@@ -128,21 +130,26 @@ export function Header({ activePage }: HeaderProps) {
           </div>
         </div>
 
-        {/* Role Switcher */}
+        {/* Account Menu */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="bg-[#27272A] border-[#3f3f46] text-[#A1A1AA] hover:text-white h-9 px-3 text-xs">
-              Role: {role}
+              Account
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="bg-[#27272A] border-[#3f3f46] text-white">
-            <DropdownMenuLabel>View As</DropdownMenuLabel>
+            <DropdownMenuLabel>{user?.email || 'Account'}</DropdownMenuLabel>
             <DropdownMenuSeparator className="bg-[#3f3f46]" />
+            <DropdownMenuLabel className="text-xs text-[#A1A1AA] font-normal">Role Switcher (Demo)</DropdownMenuLabel>
             <DropdownMenuItem onClick={() => setRole('Admin')} className="cursor-pointer hover:bg-[#3f3f46] focus:bg-[#3f3f46]">
               Admin
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => setRole('Viewer')} className="cursor-pointer hover:bg-[#3f3f46] focus:bg-[#3f3f46]">
               Viewer
+            </DropdownMenuItem>
+            <DropdownMenuSeparator className="bg-[#3f3f46]" />
+            <DropdownMenuItem onClick={signOut} className="cursor-pointer text-red-400 hover:text-red-300 hover:bg-red-400/10 focus:bg-red-400/10">
+              Sign Out
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

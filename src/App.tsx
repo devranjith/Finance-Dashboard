@@ -1,4 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useFinanceStore } from '@/store/useFinanceStore';
+import { useAuthStore } from '@/store/useAuthStore';
+import { LoginPage } from '@/components/LoginPage';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { StatCards } from '@/components/dashboard/StatCards';
 import { RecentTransactions } from '@/components/dashboard/RecentTransactions';
@@ -50,7 +53,31 @@ function DashboardPage() {
 }
 
 function App() {
+  const { user, loading, initializeAuth } = useAuthStore();
   const [activePage, setActivePage] = useState<PageName>('Dashboard');
+  const { fetchTransactions } = useFinanceStore();
+
+  useEffect(() => {
+    initializeAuth();
+  }, [initializeAuth]);
+
+  useEffect(() => {
+    if (user) {
+      fetchTransactions();
+    }
+  }, [fetchTransactions, user]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#18181A] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <LoginPage />;
+  }
 
   const renderPage = () => {
     switch (activePage) {
