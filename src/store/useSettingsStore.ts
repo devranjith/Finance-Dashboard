@@ -21,9 +21,9 @@ export const useSettingsStore = create<SettingsState>((set) => ({
         .from('user_settings')
         .select('*')
         .limit(1)
-        .single();
+        .maybeSingle();
 
-      if (error && error.code !== 'PGRST116') { // Ignore "no rows returned"
+      if (error) {
         console.error('Error fetching settings:', error);
       }
       
@@ -40,7 +40,7 @@ export const useSettingsStore = create<SettingsState>((set) => ({
   updateSettings: async (salary, day) => {
     set({ monthlySalary: salary, payday: day }); // Optimistic update
     try {
-      const { data: existingData } = await supabase.from('user_settings').select('id').limit(1).single();
+      const { data: existingData } = await supabase.from('user_settings').select('id').limit(1).maybeSingle();
       
       if (existingData) {
         await supabase
