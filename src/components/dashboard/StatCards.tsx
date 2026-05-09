@@ -1,34 +1,54 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Card } from '@/components/ui/card';
 import { Wallet, ArrowUpRight, ArrowDownRight, PiggyBank } from 'lucide-react';
+import { useFinanceStore } from '@/store/useFinanceStore';
 
 export function StatCards() {
+  const { transactions } = useFinanceStore();
+
+  const { income, expenses } = useMemo(() => {
+    let inc = 0;
+    let exp = 0;
+    transactions.forEach(t => {
+      if (t.type === 'income') inc += Number(t.amount);
+      if (t.type === 'expense') exp += Number(t.amount);
+    });
+    return { income: inc, expenses: exp };
+  }, [transactions]);
+
+  const balance = income - expenses;
+  const savings = income - expenses;
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(amount);
+  };
+
   const stats = [
     {
       title: 'Total Balance',
-      value: '$24,500',
-      change: '+15% vs last month',
+      value: formatCurrency(balance),
+      change: '+0% vs last month',
       icon: Wallet,
       positive: true,
     },
     {
       title: 'Income',
-      value: '$8,200',
-      change: '+5% vs last month',
+      value: formatCurrency(income),
+      change: '+0% vs last month',
       icon: ArrowUpRight,
       positive: true,
     },
     {
       title: 'Expenses',
-      value: '$3,150',
-      change: '-2% vs last month',
+      value: formatCurrency(expenses),
+      change: '0% vs last month',
       icon: ArrowDownRight,
       positive: false,
     },
     {
       title: 'Savings',
-      value: '$5,050',
-      change: '+12% vs last month',
+      value: formatCurrency(savings),
+      change: '+0% vs last month',
       icon: PiggyBank,
       positive: true,
     },

@@ -1,9 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { Card } from '@/components/ui/card';
 import { Search, Filter, CheckCircle2, Clock, AlertTriangle, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useFinanceStore } from '@/store/useFinanceStore';
+import { format } from 'date-fns';
 
 type InsightStatus = 'All' | 'On Track' | 'In Progress' | 'Warning';
 
@@ -83,6 +85,7 @@ const insightsData = [
 ];
 
 export function DetailedInsights() {
+  const { transactions } = useFinanceStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState<InsightStatus>('All');
   const [filterOpen, setFilterOpen] = useState(false);
@@ -98,7 +101,53 @@ export function DetailedInsights() {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  const filteredInsights = insightsData.filter((item) => {
+  const dynamicInsightsData = useMemo(() => {
+    const expenses = transactions.filter(t => t.type === 'expense');
+    const grouped = expenses.reduce((acc, t) => {
+      if (!acc[t.category]) {
+        acc[t.category] = { amount: 0, color: t.categoryColor, latestDate: t.date };
+      }
+      acc[t.category].amount += Number(t.amount);
+      if (new Date(t.date) > new Date(acc[t.category].latestDate)) {
+        acc[t.category].latestDate = t.date;
+      }
+      return acc;
+    }, {} as Record<string, { amount: number, color: string, latestDate: string }>);
+
+    return Object.entries(grouped).map(([category, data], i) => {
+      const budget = Math.max(500, Math.ceil(data.amount / 100) * 100 + 100); 
+      const progress = Math.min(100, Math.round((data.amount / budget) * 100));
+      
+      let status: InsightStatus = 'In Progress';
+      let statusIcon = Clock;
+      let statusColor = '#3b82f6';
+      
+      if (progress >= 85) {
+        status = 'Warning';
+        statusIcon = AlertTriangle;
+        statusColor = '#f59e0b';
+      } else if (progress <= 50) {
+        status = 'On Track';
+        statusIcon = CheckCircle2;
+        statusColor = '#22c55e';
+      }
+
+      return {
+        category,
+        color: data.color || '#3b82f6',
+        status,
+        statusIcon,
+        statusColor,
+        progress,
+        spending: `$${data.amount} / $${budget}`,
+        lastUpdate: format(new Date(data.latestDate), 'dd MMM yyyy'),
+        trend: 'You',
+        avatarId: 10 + i,
+      };
+    });
+  }, [transactions]);
+
+  const filteredInsights = dynamicInsightsData.filter((item) => {
     const matchSearch =
       item.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -282,7 +331,7 @@ export function DetailedInsights() {
 
           {/* Footer */}
           <div className="mt-3 pt-3 border-t border-[#3f3f46]/50 flex items-center justify-between text-xs text-[#A1A1AA]">
-            <span>Showing <span className="text-white font-medium">{filteredInsights.length}</span> of <span className="text-white font-medium">{insightsData.length}</span> categories</span>
+            <span>Showing <span className="text-white font-medium">{filteredInsights.length}</span> of <span className="text-white font-medium">{dynamicInsightsData.length}</span> categories</span>
             {(searchTerm || activeFilterCount > 0) && (
               <button
                 onClick={() => { setSearchTerm(''); setFilterStatus('All'); }}
