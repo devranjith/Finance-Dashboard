@@ -11,6 +11,9 @@ import { ZorvynAI } from '@/components/ZorvynAI';
 import { EmptyPage } from '@/components/EmptyPage';
 import { TasksPage } from '@/components/TasksPage';
 import { StockNewsPage } from '@/components/StockNewsPage';
+import { AccountsPage } from '@/components/AccountsPage';
+import { useSettingsStore } from '@/store/useSettingsStore';
+import { useTaskStore } from '@/store/useTaskStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { PageName } from '@/components/layout/Sidebar';
 
@@ -56,6 +59,8 @@ function App() {
   const { user, loading, initializeAuth } = useAuthStore();
   const [activePage, setActivePage] = useState<PageName>('Dashboard');
   const { fetchTransactions } = useFinanceStore();
+  const { fetchSettings } = useSettingsStore();
+  const { fetchTasks } = useTaskStore();
 
   useEffect(() => {
     initializeAuth();
@@ -64,8 +69,10 @@ function App() {
   useEffect(() => {
     if (user) {
       fetchTransactions();
+      fetchSettings();
+      fetchTasks();
     }
-  }, [fetchTransactions, user]);
+  }, [fetchTransactions, fetchSettings, fetchTasks, user]);
 
   if (loading) {
     return (
@@ -99,6 +106,12 @@ function App() {
         return (
           <motion.div key="stock-news" variants={pageVariants} initial="initial" animate="animate" exit="exit">
             <StockNewsPage />
+          </motion.div>
+        );
+      case 'Accounts':
+        return (
+          <motion.div key="accounts" variants={pageVariants} initial="initial" animate="animate" exit="exit">
+            <AccountsPage />
           </motion.div>
         );
       default:

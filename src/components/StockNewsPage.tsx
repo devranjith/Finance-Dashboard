@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useFinanceStore } from '@/store/useFinanceStore';
+import { useSettingsStore } from '@/store/useSettingsStore';
 import { Sparkles, TrendingUp, DollarSign, Target, Activity, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
@@ -23,14 +24,20 @@ const STOCK_OF_THE_DAY = {
 
 export function StockNewsPage() {
   const { transactions } = useFinanceStore();
+  const { monthlySalary } = useSettingsStore();
   
-  // Calculate user's total available balance
+  // Calculate user's total leftover cash (Fixed Salary + Income - Expenses)
   const availableBalance = useMemo(() => {
-    return transactions.reduce((acc, curr) => {
-      if (curr.type === 'income') return acc + curr.amount;
-      return acc - curr.amount;
+    const expenses = transactions.reduce((acc, curr) => {
+      if (curr.type === 'expense') return acc + curr.amount;
+      return acc;
     }, 0);
-  }, [transactions]);
+    const income = transactions.reduce((acc, curr) => {
+      if (curr.type === 'income') return acc + curr.amount;
+      return acc;
+    }, 0);
+    return monthlySalary + income - expenses;
+  }, [transactions, monthlySalary]);
 
   const [budgetPercent, setBudgetPercent] = useState<number>(10);
   

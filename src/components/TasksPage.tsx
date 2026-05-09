@@ -72,7 +72,7 @@ export function TasksPage() {
                     task.completed ? "bg-[#18181A]/50 border-transparent opacity-60" : "bg-[#18181A] border-[#3f3f46] hover:border-purple-500/30"
                   )}
                 >
-                  <button onClick={() => toggleTask(task.id)} className="text-[#A1A1AA] hover:text-purple-400 transition-colors shrink-0">
+                  <button onClick={() => toggleTask(task.id, task.completed)} className="text-[#A1A1AA] hover:text-purple-400 transition-colors shrink-0">
                     {task.completed ? <CheckCircle2 className="w-6 h-6 text-green-500" /> : <Circle className="w-6 h-6" />}
                   </button>
                   <span className={cn("flex-1 text-white", task.completed && "line-through text-[#A1A1AA]")}>

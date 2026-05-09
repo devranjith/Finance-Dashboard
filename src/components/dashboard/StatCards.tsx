@@ -2,9 +2,11 @@ import React, { useMemo } from 'react';
 import { Card } from '@/components/ui/card';
 import { Wallet, ArrowUpRight, ArrowDownRight, PiggyBank } from 'lucide-react';
 import { useFinanceStore } from '@/store/useFinanceStore';
+import { useSettingsStore } from '@/store/useSettingsStore';
 
 export function StatCards() {
   const { transactions } = useFinanceStore();
+  const { monthlySalary } = useSettingsStore();
 
   const { income, expenses } = useMemo(() => {
     let inc = 0;
@@ -16,8 +18,9 @@ export function StatCards() {
     return { income: inc, expenses: exp };
   }, [transactions]);
 
-  const balance = income - expenses;
-  const savings = income - expenses;
+  const totalIncome = monthlySalary + income;
+  const balance = totalIncome - expenses;
+  const savings = totalIncome - expenses;
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(amount);
@@ -27,30 +30,30 @@ export function StatCards() {
     {
       title: 'Total Balance',
       value: formatCurrency(balance),
-      change: '+0% vs last month',
+      change: 'Available Funds',
       icon: Wallet,
-      positive: true,
+      positive: balance >= 0,
     },
     {
-      title: 'Income',
-      value: formatCurrency(income),
-      change: '+0% vs last month',
+      title: 'Fixed Salary',
+      value: formatCurrency(monthlySalary),
+      change: 'Baseline Income',
       icon: ArrowUpRight,
       positive: true,
     },
     {
-      title: 'Expenses',
+      title: 'Total Expenses',
       value: formatCurrency(expenses),
-      change: '0% vs last month',
+      change: 'Spendings',
       icon: ArrowDownRight,
       positive: false,
     },
     {
-      title: 'Savings',
+      title: 'Leftover Money',
       value: formatCurrency(savings),
-      change: '+0% vs last month',
+      change: 'Cash Flow',
       icon: PiggyBank,
-      positive: true,
+      positive: savings >= 0,
     },
   ];
 
