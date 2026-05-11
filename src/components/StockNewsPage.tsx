@@ -1,32 +1,37 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useFinanceStore } from '@/store/useFinanceStore';
 import { useSettingsStore } from '@/store/useSettingsStore';
-import { Sparkles, TrendingUp, DollarSign, Target, Activity, AlertCircle } from 'lucide-react';
+import { Sparkles, TrendingUp, DollarSign, Target, Activity, AlertCircle, BookOpen, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-
-const STOCK_OF_THE_DAY = {
-  ticker: 'NVDA',
-  name: 'NVIDIA Corporation',
-  currentPrice: 850.50,
-  targetPrice: 1050.00,
-  financials: {
-    peRatio: 75.2,
-    debtToEquity: 0.12,
-    revenueGrowth: '+125%',
-  },
-  thesis: [
-    'Undisputed leader in AI infrastructure and data center GPUs.',
-    'Consistently crushing earnings expectations due to massive enterprise demand.',
-    'Low debt-to-equity ratio indicates strong financial health and minimal leverage risk.'
-  ]
-};
+import { fetchLiveMarketHeadlines } from '@/lib/finnhub';
+import { generateStockInsightFromNews, type AIStockPick } from '@/lib/gemini';
 
 export function StockNewsPage() {
   const { transactions } = useFinanceStore();
   const { monthlySalary } = useSettingsStore();
   
-  // Calculate user's total leftover cash (Fixed Salary + Income - Expenses)
+  const [insight, setInsight] = useState<AIStockPick | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function getInsights() {
+      try {
+        setLoading(true);
+        const headlines = await fetchLiveMarketHeadlines();
+        const aiPick = await generateStockInsightFromNews(headlines);
+        setInsight(aiPick);
+      } catch (err: any) {
+        console.error(err);
+        setError(err.message || 'Failed to generate insights. Check your API keys.');
+      } finally {
+        setLoading(false);
+      }
+    }
+    getInsights();
+  }, []);
+
   const availableBalance = useMemo(() => {
     const expenses = transactions.reduce((acc, curr) => {
       if (curr.type === 'expense') return acc + curr.amount;
@@ -40,80 +45,102 @@ export function StockNewsPage() {
   }, [transactions, monthlySalary]);
 
   const [budgetPercent, setBudgetPercent] = useState<number>(10);
+
+  if (loading || !insight) {
+    return (
+      <div className="max-w-6xl mx-auto flex flex-col items-center justify-center min-h-[60vh] space-y-4">
+        <Loader2 className="w-12 h-12 text-purple-500 animate-spin" />
+        <h2 className="text-xl font-medium text-white">Zorvyn AI is analyzing live market headlines...</h2>
+        <p className="text-[#A1A1AA]">This takes a few seconds.</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-6xl mx-auto p-10 text-center">
+        <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+        <h2 className="text-xl text-white font-semibold mb-2">Error connecting to APIs</h2>
+        <p className="text-[#A1A1AA]">{error}</p>
+      </div>
+    );
+  }
   
-  // Calculations
   const budgetAmount = Math.max(0, (availableBalance * budgetPercent) / 100);
-  const sharesCanBuy = Math.floor(budgetAmount / STOCK_OF_THE_DAY.currentPrice);
-  const totalCost = sharesCanBuy * STOCK_OF_THE_DAY.currentPrice;
-  const potentialProfitPerShare = STOCK_OF_THE_DAY.targetPrice - STOCK_OF_THE_DAY.currentPrice;
+  const sharesCanBuy = Math.floor(budgetAmount / insight.currentPrice);
+  const totalCost = sharesCanBuy * insight.currentPrice;
+  const potentialProfitPerShare = insight.targetPrice - insight.currentPrice;
   const totalPotentialProfit = sharesCanBuy * potentialProfitPerShare;
 
   return (
     <div className="max-w-6xl mx-auto space-y-8 pb-10">
-      {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 text-purple-400 font-semibold mb-2 text-sm tracking-widest uppercase">
-            <Sparkles className="w-4 h-4" /> Zorvyn AI Pick of the Day
+            <Sparkles className="w-4 h-4 animate-pulse" /> Live Zorvyn AI Intelligence
           </div>
-          <h1 className="text-3xl font-bold text-white">Investment Assistant</h1>
-          <p className="text-[#A1A1AA] mt-1 text-lg">Actionable insights tailored to your budget.</p>
+          <h1 className="text-3xl font-bold text-white">Market Simulator</h1>
+          <p className="text-[#A1A1AA] mt-1 text-lg">Real-time educational insights based on today's headlines.</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        {/* Left Column: Stock Analysis */}
         <div className="lg:col-span-2 space-y-6">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-[#27272A] border border-[#3f3f46] rounded-2xl p-8 relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
-               <TrendingUp className="w-32 h-32 text-blue-500" />
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="bg-blue-500/10 border border-blue-500/30 rounded-2xl p-6 shadow-lg shadow-blue-500/5">
+            <h3 className="text-blue-400 font-bold mb-2 flex items-center gap-2 text-lg">
+              <BookOpen className="w-5 h-5" /> Live Trend: {insight.scenarioName}
+            </h3>
+            <p className="text-white leading-relaxed text-[15px]">
+              {insight.educationalInsight}
+            </p>
+          </motion.div>
+
+          <motion.div key={insight.ticker} initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="bg-[#27272A] border border-[#3f3f46] rounded-2xl p-8 relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-8 opacity-5 pointer-events-none">
+               <TrendingUp className="w-32 h-32 text-purple-500" />
             </div>
             
             <div className="flex justify-between items-start mb-8 relative z-10">
               <div>
-                <h2 className="text-4xl font-bold text-white tracking-tight">{STOCK_OF_THE_DAY.ticker}</h2>
-                <p className="text-[#A1A1AA] text-lg">{STOCK_OF_THE_DAY.name}</p>
+                <h2 className="text-4xl font-bold text-white tracking-tight">{insight.ticker}</h2>
+                <p className="text-[#A1A1AA] text-lg">{insight.name}</p>
               </div>
               <div className="text-right">
-                <div className="text-3xl font-bold text-white">${STOCK_OF_THE_DAY.currentPrice.toFixed(2)}</div>
+                <div className="text-3xl font-bold text-white">${insight.currentPrice.toFixed(2)}</div>
                 <div className="text-green-400 font-medium flex items-center justify-end gap-1 mt-1">
-                  Target: ${STOCK_OF_THE_DAY.targetPrice.toFixed(2)} <Target className="w-4 h-4" />
+                  Target: ${insight.targetPrice.toFixed(2)} <Target className="w-4 h-4" />
                 </div>
               </div>
             </div>
 
-            {/* Financials Grid */}
             <h3 className="text-white font-semibold mb-4 flex items-center gap-2"><Activity className="w-5 h-5 text-blue-400" /> Financial Health</h3>
             <div className="grid grid-cols-3 gap-4 mb-8">
               <div className="bg-[#18181A] rounded-xl p-4 border border-[#3f3f46]">
                 <div className="text-[#A1A1AA] text-xs mb-1 uppercase tracking-wider">P/E Ratio</div>
-                <div className="text-white font-semibold text-xl">{STOCK_OF_THE_DAY.financials.peRatio}</div>
+                <div className="text-white font-semibold text-xl">{insight.financials.peRatio}</div>
               </div>
               <div className="bg-[#18181A] rounded-xl p-4 border border-[#3f3f46]">
                 <div className="text-[#A1A1AA] text-xs mb-1 uppercase tracking-wider">Debt/Equity</div>
-                <div className="text-white font-semibold text-xl">{STOCK_OF_THE_DAY.financials.debtToEquity}</div>
+                <div className="text-white font-semibold text-xl">{insight.financials.debtToEquity}</div>
               </div>
               <div className="bg-[#18181A] rounded-xl p-4 border border-[#3f3f46]">
                 <div className="text-[#A1A1AA] text-xs mb-1 uppercase tracking-wider">Rev Growth</div>
-                <div className="text-green-400 font-semibold text-xl">{STOCK_OF_THE_DAY.financials.revenueGrowth}</div>
+                <div className="text-green-400 font-semibold text-xl">{insight.financials.revenueGrowth}</div>
               </div>
             </div>
 
-            {/* Thesis */}
-            <h3 className="text-white font-semibold mb-4 flex items-center gap-2"><Sparkles className="w-5 h-5 text-purple-400" /> Why buy?</h3>
+            <h3 className="text-white font-semibold mb-4 flex items-center gap-2"><Sparkles className="w-5 h-5 text-purple-400" /> AI Investment Thesis</h3>
             <ul className="space-y-3">
-              {STOCK_OF_THE_DAY.thesis.map((point, idx) => (
+              {insight.thesis.map((point, idx) => (
                 <li key={idx} className="flex items-start gap-3 text-[#A1A1AA]">
                   <div className="w-1.5 h-1.5 rounded-full bg-purple-500 mt-2 shrink-0" />
-                  <span className="leading-relaxed">{point}</span>
+                  <span className="leading-relaxed text-sm">{point}</span>
                 </li>
               ))}
             </ul>
           </motion.div>
         </div>
 
-        {/* Right Column: Position Sizer */}
         <div className="space-y-6">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-gradient-to-b from-[#27272A] to-[#18181A] border border-purple-500/30 rounded-2xl p-6 shadow-[0_0_30px_rgba(168,85,247,0.1)]">
             <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
@@ -121,7 +148,6 @@ export function StockNewsPage() {
               Smart Position Sizer
             </h3>
 
-            {/* Available Balance */}
             <div className="mb-8">
               <div className="text-[#A1A1AA] text-sm mb-1">Your Available Cash</div>
               <div className={`text-3xl font-bold ${availableBalance >= 0 ? 'text-green-400' : 'text-red-400'}`}>
@@ -129,12 +155,11 @@ export function StockNewsPage() {
               </div>
               {availableBalance <= 0 && (
                 <div className="text-red-400 text-xs mt-2 flex items-center gap-1">
-                  <AlertCircle className="w-3 h-3" /> You need a positive balance to invest. Add income transactions in the dashboard!
+                  <AlertCircle className="w-3 h-3" /> You need a positive balance to invest. Add income in accounts!
                 </div>
               )}
             </div>
 
-            {/* Slider */}
             <div className={`space-y-4 mb-8 ${availableBalance <= 0 ? 'opacity-50 pointer-events-none' : ''}`}>
               <div className="flex justify-between text-sm">
                 <span className="text-[#A1A1AA]">Investment Budget</span>
@@ -153,7 +178,6 @@ export function StockNewsPage() {
               </div>
             </div>
 
-            {/* Results */}
             <div className="bg-[#18181A] rounded-xl p-5 border border-[#3f3f46] space-y-4">
               <div className="flex justify-between items-center border-b border-[#3f3f46] pb-3">
                 <span className="text-[#A1A1AA]">Shares you can buy</span>

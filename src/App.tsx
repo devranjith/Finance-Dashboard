@@ -5,7 +5,7 @@ import { LoginPage } from '@/components/LoginPage';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { StatCards } from '@/components/dashboard/StatCards';
 import { RecentTransactions } from '@/components/dashboard/RecentTransactions';
-import { PerformanceChart } from '@/components/dashboard/PerformanceChart';
+import { HighPriorityTasks } from '@/components/dashboard/HighPriorityTasks';
 import { DetailedInsights } from '@/components/dashboard/DetailedInsights';
 import { ZorvynAI } from '@/components/ZorvynAI';
 import { EmptyPage } from '@/components/EmptyPage';
@@ -45,7 +45,7 @@ function DashboardPage() {
       
       <motion.div variants={dashboardItem} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <RecentTransactions />
-        <PerformanceChart />
+        <HighPriorityTasks />
       </motion.div>
 
       <motion.div variants={dashboardItem}>
