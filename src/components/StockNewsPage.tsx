@@ -10,7 +10,7 @@ import { generateStockInsightFromNews, type AIStockPick } from '@/lib/gemini';
 export function StockNewsPage() {
   const { transactions } = useFinanceStore();
   const { monthlySalary } = useSettingsStore();
-  
+
   const [insight, setInsight] = useState<AIStockPick | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -50,7 +50,7 @@ export function StockNewsPage() {
     return (
       <div className="max-w-6xl mx-auto flex flex-col items-center justify-center min-h-[60vh] space-y-4">
         <Loader2 className="w-12 h-12 text-purple-500 animate-spin" />
-        <h2 className="text-xl font-medium text-white">Zorvyn AI is analyzing live market headlines...</h2>
+        <h2 className="text-xl font-medium text-white">Voilet AI is analyzing live market headlines...</h2>
         <p className="text-[#A1A1AA]">This takes a few seconds.</p>
       </div>
     );
@@ -65,7 +65,7 @@ export function StockNewsPage() {
       </div>
     );
   }
-  
+
   const budgetAmount = Math.max(0, (availableBalance * budgetPercent) / 100);
   const sharesCanBuy = Math.floor(budgetAmount / insight.currentPrice);
   const totalCost = sharesCanBuy * insight.currentPrice;
@@ -77,7 +77,7 @@ export function StockNewsPage() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 text-purple-400 font-semibold mb-2 text-sm tracking-widest uppercase">
-            <Sparkles className="w-4 h-4 animate-pulse" /> Live Zorvyn AI Intelligence
+            <Sparkles className="w-4 h-4 animate-pulse" /> Live Voilet AI Intelligence
           </div>
           <h1 className="text-3xl font-bold text-white">Market Simulator</h1>
           <p className="text-[#A1A1AA] mt-1 text-lg">Real-time educational insights based on today's headlines.</p>
@@ -97,9 +97,9 @@ export function StockNewsPage() {
 
           <motion.div key={insight.ticker} initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="bg-[#27272A] border border-[#3f3f46] rounded-2xl p-8 relative overflow-hidden">
             <div className="absolute top-0 right-0 p-8 opacity-5 pointer-events-none">
-               <TrendingUp className="w-32 h-32 text-purple-500" />
+              <TrendingUp className="w-32 h-32 text-purple-500" />
             </div>
-            
+
             <div className="flex justify-between items-start mb-8 relative z-10">
               <div>
                 <h2 className="text-4xl font-bold text-white tracking-tight">{insight.ticker}</h2>

@@ -7,7 +7,7 @@ import { StatCards } from '@/components/dashboard/StatCards';
 import { RecentTransactions } from '@/components/dashboard/RecentTransactions';
 import { HighPriorityTasks } from '@/components/dashboard/HighPriorityTasks';
 import { DetailedInsights } from '@/components/dashboard/DetailedInsights';
-import { ZorvynAI } from '@/components/ZorvynAI';
+import { VoiletAI } from '@/components/VoiletAI';
 import { EmptyPage } from '@/components/EmptyPage';
 import { TasksPage } from '@/components/TasksPage';
 import { StockNewsPage } from '@/components/StockNewsPage';
@@ -42,7 +42,7 @@ function DashboardPage() {
       <motion.div variants={dashboardItem}>
         <StatCards />
       </motion.div>
-      
+
       <motion.div variants={dashboardItem} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <RecentTransactions />
         <HighPriorityTasks />
@@ -90,10 +90,10 @@ function App() {
     switch (activePage) {
       case 'Dashboard':
         return <DashboardPage key="dashboard" />;
-      case 'ZorvynAI':
+      case 'VoiletAI':
         return (
-          <motion.div key="zorvyn" variants={pageVariants} initial="initial" animate="animate" exit="exit">
-            <ZorvynAI />
+          <motion.div key="Voilet" variants={pageVariants} initial="initial" animate="animate" exit="exit">
+            <VoiletAI />
           </motion.div>
         );
       case 'Tasks':

@@ -79,7 +79,7 @@ export function DashboardLayout({ children, activePage, onNavigate }: DashboardL
 
         {/* Active page label — centered */}
         <span className="absolute left-1/2 -translate-x-1/2 text-xs font-medium text-[#A1A1AA] tracking-wide">
-          {activePage === 'ZorvynAI' ? 'Zorvyn AI' : activePage}
+          {activePage === 'VoiletAI' ? 'Voilet AI' : activePage}
         </span>
 
         {/* Avatar + hamburger */}
