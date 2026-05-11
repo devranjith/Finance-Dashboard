@@ -46,7 +46,7 @@ export function LoginPage() {
 
           <div className="mt-8 flex items-center justify-center gap-2 text-sm text-[#A1A1AA]">
             <Sparkles size={14} className="text-purple-400" />
-            Secured by Voilet AI
+            Secured by Violet AI
           </div>
         </div>
       </motion.div>

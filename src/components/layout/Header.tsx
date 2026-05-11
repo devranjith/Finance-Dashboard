@@ -34,8 +34,8 @@ const PAGE_TITLES: Record<PageName, { title: string; subtitle: string }> = {
     title: 'Insights',
     subtitle: 'Deep financial analytics and trends',
   },
-  VoiletAI: {
-    title: 'Voilet AI',
+  VioletAI: {
+    title: 'Violet AI',
     subtitle: 'Your intelligent financial assistant',
   },
   Accounts: {

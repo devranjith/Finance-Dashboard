@@ -7,7 +7,7 @@ import { StatCards } from '@/components/dashboard/StatCards';
 import { RecentTransactions } from '@/components/dashboard/RecentTransactions';
 import { HighPriorityTasks } from '@/components/dashboard/HighPriorityTasks';
 import { DetailedInsights } from '@/components/dashboard/DetailedInsights';
-import { VoiletAI } from '@/components/VoiletAI';
+import { VioletAI } from '@/components/VioletAI';
 import { EmptyPage } from '@/components/EmptyPage';
 import { TasksPage } from '@/components/TasksPage';
 import { StockNewsPage } from '@/components/StockNewsPage';
@@ -90,10 +90,10 @@ function App() {
     switch (activePage) {
       case 'Dashboard':
         return <DashboardPage key="dashboard" />;
-      case 'VoiletAI':
+      case 'VioletAI':
         return (
-          <motion.div key="Voilet" variants={pageVariants} initial="initial" animate="animate" exit="exit">
-            <VoiletAI />
+          <motion.div key="Violet" variants={pageVariants} initial="initial" animate="animate" exit="exit">
+            <VioletAI />
           </motion.div>
         );
       case 'Tasks':

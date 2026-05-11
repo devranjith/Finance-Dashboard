@@ -21,7 +21,7 @@ export type PageName =
   | 'Search'
   | 'Transactions'
   | 'Insights'
-  | 'VoiletAI'
+  | 'VioletAI'
   | 'Tasks'
   | 'Stock News'
   | 'Accounts'
@@ -81,20 +81,20 @@ export function SidebarNav({ activePage, onNavigate }: NavProps) {
         ))}
       </div>
 
-      {/* Voilet AI */}
+      {/* Violet AI */}
       <div className="mb-5">
         <button
-          onClick={() => onNavigate('VoiletAI')}
+          onClick={() => onNavigate('VioletAI')}
           className={cn(
             'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all',
-            activePage === 'VoiletAI'
+            activePage === 'VioletAI'
               ? 'bg-gradient-to-r from-purple-600/30 to-blue-600/20 text-white border border-purple-500/30'
               : 'hover:bg-[#27272A]/50 hover:text-white text-[#A1A1AA]'
           )}
         >
-          <Sparkles size={16} className={activePage === 'VoiletAI' ? 'text-purple-400' : 'text-[#A1A1AA]'} />
-          <span className={activePage === 'VoiletAI' ? 'text-white' : ''}>Voilet AI</span>
-          {activePage !== 'VoiletAI' && (
+          <Sparkles size={16} className={activePage === 'VioletAI' ? 'text-purple-400' : 'text-[#A1A1AA]'} />
+          <span className={activePage === 'VioletAI' ? 'text-white' : ''}>Violet AI</span>
+          {activePage !== 'VioletAI' && (
             <span className="ml-auto text-[9px] font-semibold bg-purple-500/20 text-purple-400 px-1.5 py-0.5 rounded-full border border-purple-500/30">
               NEW
             </span>

@@ -19,7 +19,7 @@ const SUGGESTED_PROMPTS = [
 ];
 
 const AI_RESPONSES: Record<string, string> = {
-  default: "I'm Voilet AI, your intelligent financial assistant. I can help you analyze spending, optimize budgets, and provide smart financial insights. What would you like to know?",
+  default: "I'm Violet AI, your intelligent financial assistant. I can help you analyze spending, optimize budgets, and provide smart financial insights. What would you like to know?",
   spending: `📊 **Spending Analysis**\n\nBased on your recent transactions:\n\n• **Housing** — $1,400 (28% of budget) — slightly over\n• **Groceries** — $120 — within budget ✅\n• **Utilities** — $60 — within budget ✅\n• **Entertainment** — $35 — well within budget ✅\n\n💡 **Insight:** Your housing costs are your largest expense. Consider reviewing subscriptions to free up savings.`,
   budget: `💰 **Budget Breakdown**\n\nHere's how your categories stack up:\n\n• Housing — $1,400 / $2,000 — 70%\n• Food & Dining — $500 / $500 — 100%\n• Transportation — $170 / $200 — 85%\n• Entertainment — $35 / $200 — 18%\n\n🎯 Watch your Food & Dining — it hit the limit this month.`,
   savings: `🚀 **Smart Savings Tips**\n\n1. **Automate savings** — Auto-transfer 20% before spending\n2. **Review subscriptions** — Cut unused services\n3. **50/30/20 Rule** — Needs / Wants / Savings\n4. **Emergency fund** — Aim for 3–6 months expenses\n5. **Invest early** — $100/month compounds significantly\n\n💡 Based on your income, save ~$400/month.`,
@@ -49,7 +49,7 @@ function formatMessage(content: string) {
   });
 }
 
-export function VoiletAI() {
+export function VioletAI() {
   const [messages, setMessages] = useState<Message[]>([
     { id: '0', role: 'assistant', content: AI_RESPONSES.default, timestamp: new Date() },
   ]);
@@ -137,7 +137,7 @@ export function VoiletAI() {
               <Sparkles size={16} className="text-white" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-white">Voilet AI</h3>
+              <h3 className="text-sm font-semibold text-white">Violet AI</h3>
               <div className="flex items-center gap-1.5">
                 <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
                 <span className="text-[10px] sm:text-[11px] text-[#A1A1AA]">
@@ -282,7 +282,7 @@ export function VoiletAI() {
             </button>
           </form>
           <p className="text-[10px] text-[#52525b] mt-1.5 text-center hidden sm:block">
-            Voilet AI analyzes your connected transactions for personalized insights
+            Violet AI analyzes your connected transactions for personalized insights
           </p>
         </div>
       </div>

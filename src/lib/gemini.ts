@@ -26,7 +26,7 @@ export async function generateStockInsightFromNews(headlines: string[]): Promise
 
   const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
-  const prompt = `You are Voilet AI, an elite financial advisor and educator.
+  const prompt = `You are Violet AI, an elite financial advisor and educator.
 Read the following live market headlines:
 ${headlines.map(h => `- ${h}`).join('\n')}
 
