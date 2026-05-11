@@ -7,7 +7,7 @@ import { StatCards } from '@/components/dashboard/StatCards';
 import { RecentTransactions } from '@/components/dashboard/RecentTransactions';
 import { HighPriorityTasks } from '@/components/dashboard/HighPriorityTasks';
 import { DetailedInsights } from '@/components/dashboard/DetailedInsights';
-import { VioletAI } from '@/components/VioletAI';
+import { VioletAI } from '@/components/VioletAi';
 import { EmptyPage } from '@/components/EmptyPage';
 import { TasksPage } from '@/components/TasksPage';
 import { StockNewsPage } from '@/components/StockNewsPage';
